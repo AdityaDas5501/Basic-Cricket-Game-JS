@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Game</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>Bat Ball Stump Game</h1>
+    <button onclick="
+    computerChoice = computerPlay();
+    result = getResult('Bat',computerChoice);  
+    saveScore();
+    display('Bat', computerChoice, result);
+    "><img src="images/Bat.webp" alt="Bat" height="200px"></button>
+
+    <button onclick="
+    computerChoice = computerPlay();
+    result = getResult('Ball', computerChoice);  
+    saveScore();  
+    display('Ball', computerChoice, result);
+    " class="ball-button"><img src="images/Ball.svg" alt="Ball" height="120px"></button>
+
+    <button onclick="
+    computerChoice = computerPlay();
+    result = getResult('Stump', computerChoice);   
+    saveScore(); 
+    display('Stump', computerChoice, result);
+    "><img src="images/Stumps.webp" alt="Stumps" height="200px"></button>
+    <br>
+    <button class="reset-button" onclick="
+    localStorage.clear();
+    resetScore();
+    display();
+    ">Reset</button>
+
+    <div class="scoreboard">
+        <h2>SCOREBOARD!</h2>
+        <h3 id="user-move"></h3>
+        <h3 id="computer-move"></h3>
+        <h3 id="result"></h3>
+        <h3 id="score"></h3>
+    </div>
+
+    <script>
+        //Disable right click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        //Saves Progress in an object
+        let scoreStr = localStorage.getItem('score');
+        let score = JSON.parse(scoreStr) ?? {win: 0, lose: 0, tie: 0};
+        //Function of the object score
+        score.displayScore = function(){
+                return `Win: ${score.win} Lose: ${score.lose} Tie: ${score.tie}`;
+            }
+
+        //Initial Scoreboard
+        display();
+
+        function resetScore(){
+            score = {
+                win: 0, 
+                lose: 0, 
+                tie: 0, 
+                displayScore: function(){
+                return `Win: ${score.win} Lose: ${score.lose} Tie: ${score.tie}`;
+            }};
+        }
+
+        //Computer's Move
+        function computerPlay(){
+            randNum = Math.ceil(Math.random()*3);
+            if(randNum === 1){
+                return 'Bat'
+            }
+            else if(randNum === 2){
+                return 'Ball';
+            }
+            else{
+                return 'Stump';
+            }
+            return computerChoice
+        }
+
+        //Processes the result
+        function getResult(userMove, computerMove){
+            let result;
+            if(userMove==='Bat'){
+                if(computerMove === 'Ball'){   
+                    result = 'You Win!';
+                    score.win++;
+                }
+                else if(computerMove === 'Stump'){
+                    result = 'You Lose!';
+                    score.lose++;
+                }
+                else{    
+                    result = 'Draw!';
+                    score.tie++;
+                }
+            }
+            else if(userMove==='Ball'){
+                if(computerMove === 'Stump'){   
+                    result = 'You Win!';
+                    score.win++;
+                }
+                else if(computerMove === 'Bat'){     
+                    result = 'You Lose!';
+                    score.lose++;
+                }
+                else{    
+                    result = 'Draw!';
+                    score.tie++;
+                }
+            }
+            else{
+                if(computerChoice === 'Bat'){   
+                    result = 'You Win!';
+                    score.win++;
+                }
+                else if(computerChoice === 'Ball'){     
+                    result = 'You Lose!';
+                    score.lose++;
+                }
+                else{    
+                    result = 'Draw!';
+                    score.tie++;
+                }
+            }
+            return result;
+        }
+
+        function saveScore(){
+            localStorage.setItem('score',JSON.stringify(score));
+        }
+
+        function display(userMove, computerMove, result){
+            document.querySelector('#user-move').innerText = userMove ? `You have chosen: ${userMove}` : '--------------------';
+            document.querySelector('#computer-move').innerText = computerMove ? `Computer chose: ${computerMove}` : '--------------------';
+            document.querySelector('#result').innerText = result ?? '--------------------';
+            document.querySelector(`#score`).innerText = `${score.displayScore()}`;
+        }
+
+    </script>
+</body>
+</html>
